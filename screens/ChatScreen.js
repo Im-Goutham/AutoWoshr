@@ -9,7 +9,8 @@ import {
   ScrollView,
   TextInput,
   FlatList,
-  Button
+  Button,
+  RefreshControl
 } from 'react-native';
 import {Icon} from 'native-base';
 import SubHeader from '../components/SubHeader';
@@ -21,16 +22,20 @@ class ChatScreen extends Component {
      super(props);
      this.state = {
        data: [
-         {id:1, date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit amet"},
-         {id:2, date:"9:50 am", type:'out', message: "Lorem ipsum dolor sit amet"} ,
-         {id:3, date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
-         {id:4, date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
-         {id:5, date:"9:50 am", type:'out', message: "Lorem ipsum dolor sit a met"},
-         {id:6, date:"9:50 am", type:'out', message: "Lorem ipsum dolor sit a met"},
-         {id:7, date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
-         {id:8, date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
-         {id:9, date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
-       ]
+         {id:'1', date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit amet"},
+         {id:'2', date:"9:50 am", type:'out', message: "Lorem ipsum dolor sit amet"} ,
+         {id:'3', date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
+         {id:'4', date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
+         {id:'1', date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit amet"},
+         {id:'2', date:"9:50 am", type:'out', message: "Lorem ipsum dolor sit amet"} ,
+         {id:'3', date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
+         {id:'4', date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
+         {id:'1', date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit amet"},
+         {id:'2', date:"9:50 am", type:'out', message: "Lorem ipsum dolor sit amet"} ,
+         {id:'3', date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
+         {id:'4', date:"9:50 am", type:'in',  message: "Lorem ipsum dolor sit a met"},
+       ],
+        refreshing: false
      };
    }
 
@@ -41,10 +46,37 @@ class ChatScreen extends Component {
         </Text>
       );
     }
+
+
+    _onRefresh() {
+      console.log('_onRefresh called...')
+  //    this.setState({refreshing: true});
+      let data = [
+        {id:'1', date:"9:50 am", type:'in',  message: "hi 1"},
+        {id:'2', date:"9:50 am", type:'out', message: "hi 2"} ,
+        {id:'3', date:"9:50 am", type:'in',  message: "hi 3"},
+        {id:'4', date:"9:50 am", type:'in',  message: "hi 4"}
+      ];
+      this.state.data.map((val,key)=>{
+          data.push(val);
+      })
+      this.setState({data:data,refreshing: false})
+      // fetchData().then(() => {
+      //
+      // });
+    }
+
     render() {
+      console.log('came here 111')
        return (
          <View style={styles.container}>
          <FlatList style={styles.list}
+           onEndReached={() => {
+                    console.log('came here -- ');
+             }}
+           onScrollEndDrag={() => console.log("end")}
+           onScrollBeginDrag={() => console.log("start")}
+           onEndThreshold={0}
            data={this.state.data}
            keyExtractor= {(item) => {
              return item.id;
@@ -56,14 +88,15 @@ class ChatScreen extends Component {
              let itemStyle = inMessage ? styles.itemIn : styles.itemOut;
              return (
                <View style={[styles.item, itemStyle]}>
-                 {!inMessage && this.renderDate(item.date)}
+                 {/*!inMessage && this.renderDate(item.date)*/}
                  <View style={[styles.balloon]}>
-                   <Text>{item.message}</Text>
+                   <Text style={{color:'white'}}>{item.message}</Text>
                  </View>
-                 {inMessage && this.renderDate(item.date)}
+                 {/*inMessage && this.renderDate(item.date)*/}
                </View>
              )
-           }}/>
+           }}
+           />
          <View style={styles.footer}>
            <View style={styles.inputContainer}>
              <TextInput style={styles.inputs}
@@ -80,6 +113,7 @@ class ChatScreen extends Component {
        )
     }
 }
+
 
 const styles = StyleSheet.create({
         container:{
@@ -131,10 +165,12 @@ const styles = StyleSheet.create({
           borderRadius: 20,
         },
         itemIn: {
-          alignSelf: 'flex-start'
+          alignSelf: 'flex-start',
+          backgroundColor: '#454F62'
         },
         itemOut: {
-          alignSelf: 'flex-end'
+          alignSelf: 'flex-end',
+          backgroundColor: '#333F54'
         },
         time: {
           alignSelf: 'flex-end',
@@ -147,7 +183,7 @@ const styles = StyleSheet.create({
           flex: 1,
           flexDirection: 'row',
           backgroundColor:"#eeeeee",
-          borderRadius:300,
+          borderRadius:10,
           padding:5,
         },
   });
